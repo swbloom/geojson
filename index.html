@@ -1,0 +1,127 @@
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Create and style clusters</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.42.2/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.42.2/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://unpkg.com/supercluster@2.3.0/dist/supercluster.min.js"></script>
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+
+<div id='map'></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2Jsb29tIiwiYSI6ImNqYWluODZkZTIxNHIzMm8yYjUzMzA4bDIifQ.CwWb2rgO0zkPkPrfdu3P8A';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/basic-v9',
+    center: [-103.59179687498357, 40.66995747013945],
+    zoom: 3
+});
+
+map.on('load', function() {
+    // Add a new source from our GeoJSON data and set the
+    // 'cluster' option to true. GL-JS will add the point_count property to your source data.
+    //     data: "mapbox://sbloom.7po02xkq",
+    // });
+    map.addLayer({
+        "id": "non-regulatory-layer-solar",
+        "type": "circle",
+        "source": {
+            type: "vector",
+            url: "mapbox://sbloom.4fs1b6hj"
+        },
+        "source-layer": "NonRegulatory_Layersgeojson",
+        "paint": {
+            "circle-color": {
+                "base": 1,
+                "type": "interval",
+                "property": "Ranked_Sol",
+                "stops": [
+                    [
+                        0,
+                        "green"
+                    ],
+                    // [
+                    //     1,
+                    //     "blue"
+                    // ],
+                    // [
+                    //     2,
+                    //     "light green"
+                    // ],
+                    // [
+                    //     3,
+                    //     "light blue"
+                    // ],
+                    // [
+                    //     4,
+                    //     "hsl(42, 79%, 35%)"
+                    // ]
+                ]
+            }
+        }
+    }); 
+    map.addLayer({
+        "id": "non-regulatory-layer",
+        "type": "circle",
+        "source": {
+            type: "vector",
+            url: "mapbox://sbloom.4fs1b6hj"
+        },
+        "source-layer": "NonRegulatory_Layersgeojson",
+        "paint": {
+            "circle-color": {
+                "base": 1,
+                "type": "interval",
+                "property": "Ranked_Win",
+                "stops": [
+                    [
+                        0,
+                        "light blue"
+                    ],
+                    // [
+                    //     1,
+                    //     "blue"
+                    // ],
+                    // [
+                    //     2,
+                    //     "light green"
+                    // ],
+                    // [
+                    //     3,
+                    //     "light blue"
+                    // ],
+                    // [
+                    //     4,
+                    //     "hsl(42, 79%, 35%)"
+                    // ]
+                ]
+            }
+        }
+    });
+
+    map.setFilter('non-regulatory-layer-solar', ['==', 'Ranked_Sol', 4]);
+    
+    map.setFilter('non-regulatory-layer', ['==', 'Ranked_Win', 2]);
+
+    map.on('click', 'non-regulatory-layer', function (e) {
+        console.log(e);
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties.NatRegion)
+            .addTo(map);
+    });
+
+    
+});
+</script>
+
+</body>
+</html>
